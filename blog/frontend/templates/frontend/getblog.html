@@ -1,0 +1,93 @@
+{% extends "frontend/main.html" %}
+
+{% block content %}
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Please Log In</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          You need to log in to see the comments and details.
+        </div>
+        <div class="modal-footer">
+          <a href="{% url 'login' %}" class="btn btn-primary">Log In</a>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">All Blog Posts</h1>
+
+    <!-- Blog Posts -->
+    <div class="row justify-content-center">
+        {% for post in blog_posts %}
+            <div class="col-md-8 mb-4">
+                {% if request.session.access_token %}
+                <a href="{% url 'blog_detail' post.uid %}" class="text-decoration-none">
+                {% else %}
+                <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#loginModal">
+                {% endif %}
+                <div class="card">
+                    {% if post.image %}
+                        <img src="{{ post.image }}" 
+                        class="card-img-top" 
+                        style="width: auto; height: 300px; object-fit: contain; margin-right: 10px;" 
+                        alt="Post image">
+                    {% endif %}
+                    <div class="card-body">
+                        <h4 class="card-title"  style="text-decoration: underline">{{ post.title }}</h4>
+                        <p class="card-text fs-5">{{ post.content }}</p>
+                        <p class="card-text">by- <b class="fs-5">{{ post.username }}</b> &nbsp; {{ post.created_at | slice:":10" }}</p>
+                        {% if post.created_at != post.updated_at %}
+                            <p class="card-text">Updated on {{ post.updated_at | slice:":10" }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page|add:-1 }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+            {% endif %}
+
+            {% for i in page_range %}
+                <li class="page-item {% if i == page %}active{% endif %}">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+
+            {% if has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page|add:1 }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+    
+    
+{% endblock content %}
+     
+

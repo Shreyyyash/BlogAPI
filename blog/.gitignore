@@ -1,0 +1,21 @@
+# Virtual environment
+myenv/
+venv/
+
+# Python files
+*.pyc
+__pycache__/
+
+# Django files
+*.log
+*.pot
+*.pyc
+*.so
+*.db
+*.sqlite3
+
+# Environment variables
+.env
+
+# Media folder
+media/

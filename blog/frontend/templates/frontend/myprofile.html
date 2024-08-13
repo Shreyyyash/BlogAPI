@@ -1,0 +1,51 @@
+{% extends "frontend/main.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">My Blog Posts</h1>
+    <a href="{% url 'create_blog_post' %}" class="btn btn-primary">Create Blog Post</a>
+    
+    {% if messages %}
+        <div class="alert alert-success">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Blog Posts -->
+    <div id="posts" class="row justify-content-center">
+        {% for post in blog_posts %}
+            <div class="col-md-8 mb-4">
+                <a href="{% url 'blog_detail' post.uid %}" class="text-decoration-none">
+                <div class="card">                  
+                    {% if post.image %}
+                    <img src="{{ post.image }}" 
+                             class="card-img-top" 
+                             style="width: auto; height: 300px; object-fit: contain; margin-right: 10px;" 
+                             alt="Post image">
+                    {% endif %}
+                    <div class="card-body">                                              
+                        <h3 class="card-title">{{ post.title }}</h3>
+                        <p class="card-text fs-5">{{ post.content }}</p>
+                        <p class="card-text">-{{ post.created_at }}</p>
+                        {% if post.created_at != post.updated_at %}
+                            <p class="card-text">Updated on {{ post.updated_at }}</p>
+                        {% endif %}
+                        
+                        <div class="d-flex justify-content-start">
+                            <form method="post" action="{% url 'delete_blog_post' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="blog_uid" value="{{ post.uid }}">
+                                <button type="submit" class="btn btn-danger mx-2">Delete</button>
+                            </form>
+                            <form method="get" enctype="multipart/form-data" action="{% url 'update_blog_post' post.uid %}">
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

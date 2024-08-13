@@ -1,0 +1,43 @@
+{% extends "frontend/main.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">SignUp</h1>
+
+    {% if error_message %}
+        <div class="alert alert-danger">
+            <p>{{ error_message }}</p>
+        </div>
+    {% endif %}
+
+    {% if non_field_errors %}
+        <div class="alert alert-danger">
+            <ul>
+            {% for error in non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {% if password_errors %}
+        <div class="alert alert-danger">
+            {% for error in password_errors %}
+                <p>{{ error | striptags }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary mt-3">Sign Up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,66 @@
+{% extends "frontend/main.html" %}
+{% load tz %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Post Details Column -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                {% if blog_post.image %}
+                    <img src="{{ blog_post.image }}" 
+                    class="card-img-top" 
+                    style="width: auto; height: 300px; object-fit: contain; margin-right: 10px;" 
+                    alt="Post image">
+                {% endif %}
+                <div class="card-body">
+                    <h2 class="card-title">{{ blog_post.title }}</h2>
+                    <p class="card-text fs-4">{{ blog_post.content }}</p>
+                    <p class="card-text fs-5"><small class="text-muted">Created by <b>{{ blog_post.username }}</b> on {{ blog_post.created_at }}</small></p>
+                    {% if blog_post.created_at != blog_post.updated_at %}
+                        <p class="card-text"><small class="text-muted">Updated on  {{ blog_post.updated_at }}</small></p>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Comment Form -->
+            <form method="post" action="{% url 'add_comment' blog_post.uid %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="comment">Add a comment:</label>
+                    <textarea class="form-control" id="comment" name="content" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+            </form>
+        </div>
+        
+        <!-- Comments Column -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">Comments</h4>
+                    <!-- Display comments -->
+                    {% for comment in comments %}
+                        <div class="row mb-3 align-items-center">
+                            <div class="col-md-4">
+                                <h5 class="mt-0">{{ comment.username }}</h5>
+                                <p>{{ comment.content }}</p>
+                            </div>
+                            <div class="col-md-2">
+                                {% if comment.username == current_username or blog_post.username == current_username %}
+                                    <form method="post" action="{% url 'delete_comment' comment.uid %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="blog_uid" value="{{ blog_post.uid }}">                                  
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <hr>
+                    {% empty %}
+                        <p>No comments yet. Be the first to comment!</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
